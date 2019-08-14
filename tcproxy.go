@@ -12,7 +12,7 @@ import (
 
 var (
 	target    *string = flag.String("target", "", "target host:port")
-	localPort *string = flag.String("local-port", "8080", "local listen port")
+	localPort *string = flag.String("bind", ":8080", "local listen port")
 )
 
 type Pipe struct {
@@ -52,12 +52,12 @@ func processConnection(localConn net.Conn, targetAddr string) {
 func main() {
 	flag.Parse()
 	if *target == "" {
-		log.Printf("usage: tcproxy --target host:port --local-port port [--use-log]\n")
+		log.Println("usage: tcproxy --target host:port")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 	log.Printf("Start listening on port %s and forwarding data to %s\n", *localPort, *target)
-	listener, err := net.Listen("tcp", ":"+*localPort)
+	listener, err := net.Listen("tcp", *localPort)
 	if err != nil {
 		log.Fatalf("Unable to start listener, %v\n", err)
 	}
